@@ -1,0 +1,123 @@
+// Field config drives the generic CRUD editor.
+// types: text | textarea | slug | image | icon | color | number | bool | list | links | date | select
+
+export const CONTENT = {
+  products: {
+    label: 'Products',
+    singular: 'Product',
+    columns: ['cover_image', 'title', 'short_description'],
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', required: true },
+      { key: 'slug', label: 'URL slug', type: 'slug', from: 'title', help: 'Page address: /products/your-slug' },
+      { key: 'short_description', label: 'Card description', type: 'textarea', rows: 2, help: 'Shown on cards and the product list.' },
+      { key: 'tagline', label: 'Detail page subtitle', type: 'text' },
+      { key: 'description', label: 'Long description (optional)', type: 'textarea', rows: 4 },
+      { key: 'cover_image', label: 'Cover image', type: 'image' },
+      { key: 'icon', label: 'Icon', type: 'icon' },
+      { key: 'accent', label: 'Icon colour', type: 'color' },
+      { key: 'links', label: 'Link list (e.g. Buy a Car, Rent a Car)', type: 'links' },
+      { key: 'features', label: 'Checklist / features', type: 'list' },
+      { key: 'cta_label', label: 'Button text', type: 'text', half: true },
+      { key: 'cta_url', label: 'Button link', type: 'text', half: true, help: 'Full URL (https://…) or a page like /academy' },
+      { key: 'cta_icon', label: 'Button icon', type: 'icon' },
+      { key: 'sort_order', label: 'Order', type: 'number', half: true },
+      { key: 'published', label: 'Published', type: 'bool', half: true },
+    ],
+    defaults: { icon: 'Box', accent: '#F5A300', features: [], links: [], cta_icon: 'ExternalLink', sort_order: 99, published: true },
+  },
+  services: {
+    label: 'Services',
+    singular: 'Service',
+    columns: ['icon', 'title', 'short_description'],
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', required: true },
+      { key: 'slug', label: 'URL slug', type: 'slug', from: 'title' },
+      { key: 'short_title', label: 'Short title (home page strip)', type: 'text', help: 'e.g. "Web Development"' },
+      { key: 'short_description', label: 'Short description', type: 'text' },
+      { key: 'description', label: 'Description', type: 'textarea', rows: 4 },
+      { key: 'icon', label: 'Icon', type: 'icon' },
+      { key: 'cover_image', label: 'Image (optional)', type: 'image' },
+      { key: 'features', label: 'What is included', type: 'list' },
+      { key: 'sort_order', label: 'Order', type: 'number', half: true },
+      { key: 'published', label: 'Published', type: 'bool', half: true },
+    ],
+    defaults: { icon: 'Briefcase', features: [], sort_order: 99, published: true },
+  },
+  academy_programs: {
+    label: 'Academy Programmes',
+    singular: 'Programme',
+    columns: ['cover_image', 'title', 'kind', 'start_date'],
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', required: true },
+      { key: 'slug', label: 'URL slug', type: 'slug', from: 'title' },
+      { key: 'kind', label: 'Type', type: 'select', options: ['Workshop', 'Masterclass', 'Course', 'Mentoring'], half: true },
+      { key: 'price', label: 'Price', type: 'text', half: true, help: 'e.g. Free, £49' },
+      { key: 'short_description', label: 'Summary', type: 'textarea', rows: 2 },
+      { key: 'description', label: 'Full description', type: 'textarea', rows: 4 },
+      { key: 'cover_image', label: 'Image', type: 'image' },
+      { key: 'start_date', label: 'Start date', type: 'date', half: true },
+      { key: 'duration', label: 'Duration', type: 'text', half: true },
+      { key: 'location', label: 'Location', type: 'text', half: true },
+      { key: 'capacity', label: 'Capacity', type: 'number', half: true },
+      { key: 'outcomes', label: 'What you will learn', type: 'list' },
+      { key: 'sort_order', label: 'Order', type: 'number', half: true },
+      { key: 'published', label: 'Published', type: 'bool', half: true },
+    ],
+    defaults: { kind: 'Workshop', outcomes: [], sort_order: 99, published: true },
+  },
+  faqs: {
+    label: 'FAQs',
+    singular: 'FAQ',
+    columns: ['question'],
+    fields: [
+      { key: 'question', label: 'Question', type: 'text', required: true },
+      { key: 'answer', label: 'Answer', type: 'textarea', rows: 4, required: true },
+      { key: 'sort_order', label: 'Order', type: 'number', half: true },
+      { key: 'published', label: 'Published', type: 'bool', half: true },
+    ],
+    defaults: { sort_order: 99, published: true },
+  },
+}
+
+export const SETTINGS_FIELDS = [
+  { group: 'Contact' },
+  { key: 'phone', label: 'Phone (displayed)', type: 'text', half: true },
+  { key: 'whatsapp', label: 'WhatsApp number (digits, with country code)', type: 'text', half: true },
+  { key: 'email', label: 'Email', type: 'text', half: true },
+  { key: 'location', label: 'Location', type: 'text', half: true },
+  { group: 'Desktop hero' },
+  { key: 'hero_title_1', label: 'Headline (white)', type: 'text', half: true },
+  { key: 'hero_title_2', label: 'Headline (gold)', type: 'text', half: true },
+  { key: 'hero_subtitle', label: 'Subtitle', type: 'textarea', rows: 3 },
+  { key: 'hero_image', label: 'Hero photo (transparent PNG works best)', type: 'image' },
+  { group: 'Mobile hero' },
+  { key: 'mobile_hero_title_1', label: 'Headline (white)', type: 'text', half: true },
+  { key: 'mobile_hero_title_2', label: 'Headline (gold)', type: 'text', half: true },
+  { key: 'mobile_hero_subtitle', label: 'Subtitle', type: 'textarea', rows: 3 },
+  { group: 'Footer call-to-action' },
+  { key: 'cta_title', label: 'Title', type: 'text' },
+  { key: 'cta_subtitle', label: 'Subtitle', type: 'text' },
+  { group: 'About page' },
+  { key: 'about_title', label: 'Title', type: 'text' },
+  { key: 'about_text', label: 'Text (blank line = new paragraph)', type: 'textarea', rows: 8 },
+  { key: 'about_image', label: 'Photo', type: 'image' },
+]
+
+export const SUBMISSIONS = {
+  bookings: {
+    label: 'Consultation Bookings',
+    statuses: ['new', 'contacted', 'booked', 'closed'],
+    columns: [
+      ['full_name', 'Name'], ['email', 'Email'], ['phone', 'Phone'], ['topic', 'Topic'],
+      ['preferred_date', 'Date'], ['preferred_time', 'Time'], ['contact_method', 'Via'], ['message', 'Message'],
+    ],
+  },
+  academy_enrollments: {
+    label: 'Academy People',
+    statuses: ['new', 'contacted', 'confirmed', 'cancelled'],
+    columns: [
+      ['full_name', 'Name'], ['email', 'Email'], ['phone', 'Phone'], ['country', 'Country'],
+      ['program_title', 'Programme'], ['message', 'Message'],
+    ],
+  },
+}
