@@ -1,6 +1,7 @@
 -- =============================================================
 -- Dr Bady — Supabase schema
--- Run this whole file once in Supabase Dashboard → SQL Editor.
+-- Run this whole file once in Supabase Dashboard → SQL Editor,
+-- then run supabase/blog_seo.sql (blog + SEO tables).
 -- Safe to re-run: uses IF NOT EXISTS / ON CONFLICT where possible.
 -- =============================================================
 

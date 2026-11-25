@@ -3,6 +3,7 @@ import { ArrowRight, CalendarDays, Layers, LayoutGrid, Rocket, Users, CircleArro
 import { useData } from '../lib/DataContext'
 import { Icon, WhatsAppIcon } from '../lib/icons'
 import { useIsMobile, waLink } from '../lib/hooks'
+import Seo, { absUrl, useSiteBase } from '../components/Seo'
 
 export function TwoLine({ text }) {
   // "Branding & Design" -> "Branding" / "& Design"; "Web Development" -> "Web" / "Development"
@@ -27,10 +28,10 @@ export function ProductCard({ p }) {
   )
 }
 
-export function SectionTitle({ first, underline, sub }) {
+export function SectionTitle({ first, underline, sub, as: H = 'h2' }) {
   return (
     <div className="section-title">
-      <h2>{first} <span className="u-gold">{underline}</span></h2>
+      <H className="st-h">{first} <span className="u-gold">{underline}</span></H>
       {sub && <p>{sub}</p>}
     </div>
   )
@@ -130,6 +131,32 @@ function MobileHome() {
   )
 }
 
+function HomeSeo() {
+  const { settings: s } = useData()
+  const base = useSiteBase()
+  const name = s.seo_site_name || 'Dr Bady'
+  const sameAs = [s.whatsapp && waLink(s.whatsapp)].filter(Boolean)
+  return (
+    <Seo
+      path="/"
+      jsonLd={[
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name,
+          url: base,
+          logo: absUrl(base, s.seo_org_logo || '/branding/logo_symbol.png'),
+          email: s.email,
+          telephone: s.phone,
+          areaServed: ['GB', 'GM'],
+          ...(sameAs.length ? { sameAs } : {}),
+        },
+        { '@context': 'https://schema.org', '@type': 'WebSite', name, url: base },
+      ]}
+    />
+  )
+}
+
 export default function Home() {
-  return useIsMobile() ? <MobileHome /> : <DesktopHome />
+  return <><HomeSeo />{useIsMobile() ? <MobileHome /> : <DesktopHome />}</>
 }

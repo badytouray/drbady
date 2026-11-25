@@ -5,6 +5,7 @@ import { useIsMobile } from '../lib/hooks'
 import { Sheet } from '../components/MobileShell'
 import { EnrollForm } from '../components/Forms'
 import { SectionTitle } from './Home'
+import Seo from '../components/Seo'
 
 function fmtDate(d) {
   if (!d) return null
@@ -70,6 +71,7 @@ export default function Academy() {
   if (isMobile)
     return (
       <Sheet title="Academy">
+        <Seo path="/academy" />
         <p className="m-lead">Workshops and masterclasses to build your skills, brand and business.</p>
         {list}
         {modal}
@@ -78,8 +80,9 @@ export default function Academy() {
 
   return (
     <section className="section page-top">
+      <Seo path="/academy" />
       <div className="container">
-        <SectionTitle first="Dr Bady" underline="Academy" sub="Workshops and masterclasses to build your skills, brand and business." />
+        <SectionTitle first="Dr Bady" underline="Academy" sub="Workshops and masterclasses to build your skills, brand and business." as="h1" />
         {list}
       </div>
       {modal}

@@ -7,12 +7,15 @@ import { Sheet } from '../components/MobileShell'
 import ListRow from '../components/ListRow'
 import { BookingForm } from '../components/Forms'
 import { SectionTitle } from './Home'
+import Seo, { breadcrumbLd, useSiteBase } from '../components/Seo'
 
 export function ServicesPage() {
   const { services } = useData()
+  const seo = <Seo path="/services" />
   if (useIsMobile())
     return (
       <Sheet title="My Services">
+        {seo}
         <div className="m-list m-list-tight">
           {services.map((s) => (
             <ListRow key={s.id} compact to={`/services/${s.slug}`} icon={s.icon} title={s.title} desc={s.short_description} />
@@ -22,8 +25,9 @@ export function ServicesPage() {
     )
   return (
     <section className="section page-top">
+      {seo}
       <div className="container">
-        <SectionTitle first="My" underline="Services" sub={<>Hands-on support to bring your ideas, <b>brand and</b> business to life.</>} />
+        <SectionTitle first="My" underline="Services" sub={<>Hands-on support to bring your ideas, <b>brand and</b> business to life.</>} as="h1" />
         <div className="svc-grid">
           {services.map((s) => (
             <Link key={s.id} to={`/services/${s.slug}`} className="svc-card">
@@ -45,8 +49,30 @@ export function ServiceDetail() {
   const { slug } = useParams()
   const { services, loading } = useData()
   const isMobile = useIsMobile()
+  const base = useSiteBase()
+  const { settings } = useData()
   const s = services.find((x) => x.slug === slug)
   if (!s) return loading ? null : <Navigate to="/services" replace />
+  const seo = (
+    <Seo
+      title={s.meta_title || s.title}
+      description={s.meta_description || s.description || s.short_description}
+      image={s.cover_image}
+      canonicalPath={`/services/${s.slug}`}
+      jsonLd={[
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          name: s.title,
+          description: s.description || s.short_description,
+          url: `${base}/services/${s.slug}`,
+          provider: { '@type': 'Organization', name: settings.seo_site_name || 'Dr Bady', url: base },
+          areaServed: ['GB', 'GM'],
+        },
+        breadcrumbLd(base, [{ name: 'Home', path: '/' }, { name: 'Services', path: '/services' }, { name: s.title, path: `/services/${s.slug}` }]),
+      ]}
+    />
+  )
 
   const body = (
     <>
@@ -62,6 +88,7 @@ export function ServiceDetail() {
   if (isMobile)
     return (
       <Sheet>
+        {seo}
         <div className="svc-head">
           <span className="svc-card-icon"><Icon name={s.icon} size={34} strokeWidth={1.8} /></span>
           <div><h1>{s.title}</h1><p className="d-tag">{s.short_description}</p></div>
@@ -75,6 +102,7 @@ export function ServiceDetail() {
 
   return (
     <section className="section page-top">
+      {seo}
       <div className="container">
         <nav className="crumbs"><Link to="/services">Services</Link> / <span>{s.title}</span></nav>
         <div className="detail-grid">

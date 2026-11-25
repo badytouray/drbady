@@ -21,6 +21,15 @@ export const seedSettings = {
   about_text:
     'Dr Bady is a creative entrepreneur building digital products, brands and businesses across the UK and The Gambia.\n\nFrom car marketplaces to venue security reporting, from brand identities to hands-on masterclasses, the goal is always the same: turn ideas into real-world solutions that help people and communities grow.',
   about_image: '/branding/illustrative_founder.png',
+  // SEO defaults
+  site_url: '',
+  seo_site_name: 'Dr Bady',
+  seo_title_suffix: ' | Dr Bady',
+  seo_default_description:
+    'Dr Bady — digital products, business services and training that solve real problems in the UK, The Gambia and beyond.',
+  seo_default_image: '/branding/illustrative_founder.png',
+  seo_twitter: '',
+  seo_org_logo: '/branding/logo_symbol.png',
 }
 
 export const seedProducts = [
@@ -86,4 +95,51 @@ export const seedFaqs = [
   { id: 'f1', question: 'How do I book a chat?', answer: 'Use the Book a Chat button or message on WhatsApp. Pick a topic and a time that suits you and we will confirm.', sort_order: 1, published: true },
   { id: 'f2', question: 'Do you work with clients outside the UK?', answer: 'Yes. Most work is delivered remotely across the UK, The Gambia and beyond.', sort_order: 2, published: true },
   { id: 'f3', question: 'How much does a website cost?', answer: 'It depends on what you need. Book a free chat and you will get a clear quote and plan.', sort_order: 3, published: true },
+]
+
+export const seedPageSeo = [
+  { path: '/', label: 'Home', title: 'Dr Bady — Ideas • Build • Brand • Deliver', description: 'Digital products, business services and training that solve real problems in the UK, The Gambia and beyond.', changefreq: 'weekly', priority: 1.0, sort_order: 1, noindex: false, in_sitemap: true },
+  { path: '/products', label: 'Products', title: 'Products', description: 'Purpose-built digital products for real-world needs: Motor Gambia, Security Reports, Creative Mindset and more.', changefreq: 'monthly', priority: 0.9, sort_order: 2, noindex: false, in_sitemap: true },
+  { path: '/services', label: 'Services', title: 'Services', description: 'Web & app development, branding, printing, marketing, consulting and training for businesses in the UK and The Gambia.', changefreq: 'monthly', priority: 0.9, sort_order: 3, noindex: false, in_sitemap: true },
+  { path: '/blog', label: 'Blog', title: 'Blog', description: 'Ideas, guides and stories on business, branding, technology and growth from Dr Bady.', changefreq: 'daily', priority: 0.9, sort_order: 4, noindex: false, in_sitemap: true },
+  { path: '/academy', label: 'Academy', title: 'Academy', description: 'Workshops and masterclasses to build your skills, brand and business.', changefreq: 'weekly', priority: 0.8, sort_order: 5, noindex: false, in_sitemap: true },
+  { path: '/about', label: 'About', title: 'About Dr Bady', description: 'Dr Bady is a creative entrepreneur building digital products, brands and businesses across the UK and The Gambia.', changefreq: 'monthly', priority: 0.7, sort_order: 6, noindex: false, in_sitemap: true },
+  { path: '/contact', label: 'Contact', title: 'Contact', description: 'Get in touch about an idea, project or business challenge. WhatsApp, phone, email or book a chat.', changefreq: 'yearly', priority: 0.6, sort_order: 7, noindex: false, in_sitemap: true },
+  { path: '/book', label: 'Book a Chat', title: 'Book a Chat', description: 'Book a free chat to turn your idea, project or business challenge into a plan.', changefreq: 'yearly', priority: 0.6, sort_order: 8, noindex: false, in_sitemap: true },
+  { path: '/faqs', label: 'FAQs', title: 'Frequently Asked Questions', description: 'Answers to common questions about working with Dr Bady.', changefreq: 'monthly', priority: 0.5, sort_order: 9, noindex: false, in_sitemap: true },
+  { path: '/more', label: 'More (mobile menu)', title: 'More', description: null, changefreq: 'yearly', priority: 0.1, sort_order: 10, noindex: true, in_sitemap: false },
+]
+
+export const seedBlogCategories = [
+  { id: 'c1', slug: 'business', title: 'Business', description: 'Starting, running and growing a business.', sort_order: 1, published: true },
+  { id: 'c2', slug: 'branding', title: 'Branding', description: 'Logos, identity and standing out.', sort_order: 2, published: true },
+  { id: 'c3', slug: 'technology', title: 'Technology', description: 'Websites, apps and digital tools.', sort_order: 3, published: true },
+]
+
+export const seedBlogPosts = [
+  {
+    id: 'b1', slug: 'turn-your-idea-into-a-business',
+    title: 'How to Turn Your Idea Into a Real Business in 7 Days',
+    excerpt: 'A practical 7-day plan to test your idea, build a simple brand and get your first customers.',
+    content: `Every business starts as an idea. The difference between an idea and a business is **action**. This 7-day plan helps you turn your idea into a business you can test with real customers.
+
+## Day 1–2: Spot the opportunity
+
+Write down the problem you solve and who has it. Talk to five people who have that problem.
+
+## Day 3–4: Build and brand
+
+- Pick a clear name
+- Create a simple logo and colours
+- Set up a one-page website or social profile
+
+## Day 5–7: Promote and learn
+
+Share your offer, collect feedback and improve. Small steps every day beat a perfect plan that never starts.
+
+> Want help? [Book a free chat](/book) and we will build your plan together.`,
+    cover_image: '/images/creative_mindset.png', cover_alt: 'Notebook and laptop on a desk planning a new business idea',
+    author_name: 'Dr Bady', category_id: 'c1', tags: ['business ideas', 'startups', 'planning'], featured: true, reading_minutes: 2,
+    published: true, published_at: '2026-01-15T09:00:00Z', updated_at: '2026-01-15T09:00:00Z',
+  },
 ]

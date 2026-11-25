@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Route, Routes, Navigate, Link } from 'react-router-dom'
 import {
   Box, LayoutGrid, GraduationCap, UsersRound, CalendarDays, CircleHelp, Settings,
-  LayoutDashboard, LogOut, ExternalLink, Menu, X,
+  LayoutDashboard, LogOut, ExternalLink, Menu, X, Newspaper, Tags, SearchCheck,
 } from 'lucide-react'
 import { supabase, hasSupabase } from '../lib/supabase'
 import { LogoMark } from '../components/Logo'
@@ -11,6 +11,8 @@ import CrudPage from './CrudPage'
 import Submissions from './Submissions'
 import SettingsPage from './SettingsPage'
 import Dashboard from './Dashboard'
+import BlogAdmin from './BlogAdmin'
+import PageSeoAdmin from './PageSeoAdmin'
 import './admin.css'
 
 const NAV = [
@@ -20,10 +22,14 @@ const NAV = [
   { to: '/admin/services', label: 'Services', icon: LayoutGrid },
   { to: '/admin/academy_programs', label: 'Academy Programmes', icon: GraduationCap },
   { to: '/admin/faqs', label: 'FAQs', icon: CircleHelp },
+  { section: 'Blog' },
+  { to: '/admin/blog_posts', label: 'Posts', icon: Newspaper },
+  { to: '/admin/blog_categories', label: 'Categories', icon: Tags },
   { section: 'People' },
   { to: '/admin/bookings', label: 'Bookings', icon: CalendarDays },
   { to: '/admin/academy_enrollments', label: 'Academy People', icon: UsersRound },
   { section: 'Site' },
+  { to: '/admin/seo', label: 'SEO & Pages', icon: SearchCheck },
   { to: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
@@ -137,6 +143,8 @@ export default function AdminApp() {
           <Route index element={<Dashboard />} />
           {Object.keys(CONTENT).map((t) => <Route key={t} path={t} element={<CrudPage table={t} />} />)}
           {Object.keys(SUBMISSIONS).map((t) => <Route key={t} path={t} element={<Submissions table={t} />} />)}
+          <Route path="blog_posts" element={<BlogAdmin />} />
+          <Route path="seo" element={<PageSeoAdmin />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>

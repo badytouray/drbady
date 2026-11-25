@@ -1,5 +1,6 @@
 // Field config drives the generic CRUD editor.
-// types: text | textarea | slug | image | icon | color | number | bool | list | links | date | select
+// types: text | textarea | slug | image | icon | color | number | bool | list | links | date | datetime | select | tags
+// text/textarea accept `max` (and `min`) to show a character counter.
 
 export const CONTENT = {
   products: {
@@ -20,6 +21,8 @@ export const CONTENT = {
       { key: 'cta_label', label: 'Button text', type: 'text', half: true },
       { key: 'cta_url', label: 'Button link', type: 'text', half: true, help: 'Full URL (https://…) or a page like /academy' },
       { key: 'cta_icon', label: 'Button icon', type: 'icon' },
+      { key: 'meta_title', label: 'SEO title', type: 'text', max: 60, min: 30, help: 'Optional. Defaults to the title. “| Dr Bady” is added automatically.' },
+      { key: 'meta_description', label: 'Meta description', type: 'textarea', rows: 2, max: 160, min: 110, help: 'Optional. Summary shown in Google results.' },
       { key: 'sort_order', label: 'Order', type: 'number', half: true },
       { key: 'published', label: 'Published', type: 'bool', half: true },
     ],
@@ -38,6 +41,8 @@ export const CONTENT = {
       { key: 'icon', label: 'Icon', type: 'icon' },
       { key: 'cover_image', label: 'Image (optional)', type: 'image' },
       { key: 'features', label: 'What is included', type: 'list' },
+      { key: 'meta_title', label: 'SEO title', type: 'text', max: 60, min: 30, help: 'Optional. Defaults to the title. “| Dr Bady” is added automatically.' },
+      { key: 'meta_description', label: 'Meta description', type: 'textarea', rows: 2, max: 160, min: 110, help: 'Optional. Summary shown in Google results.' },
       { key: 'sort_order', label: 'Order', type: 'number', half: true },
       { key: 'published', label: 'Published', type: 'bool', half: true },
     ],
@@ -64,6 +69,21 @@ export const CONTENT = {
       { key: 'published', label: 'Published', type: 'bool', half: true },
     ],
     defaults: { kind: 'Workshop', outcomes: [], sort_order: 99, published: true },
+  },
+  blog_categories: {
+    label: 'Blog Categories',
+    singular: 'Category',
+    columns: ['title', 'description'],
+    fields: [
+      { key: 'title', label: 'Name', type: 'text', required: true },
+      { key: 'slug', label: 'URL slug', type: 'slug', from: 'title', help: 'Page address: /blog/category/your-slug' },
+      { key: 'description', label: 'Description', type: 'textarea', rows: 2, help: 'Shown at the top of the category page.' },
+      { key: 'meta_title', label: 'SEO title', type: 'text', max: 60, help: 'Optional. Defaults to “<Name> articles”.' },
+      { key: 'meta_description', label: 'Meta description', type: 'textarea', rows: 2, max: 160, min: 110 },
+      { key: 'sort_order', label: 'Order', type: 'number', half: true },
+      { key: 'published', label: 'Published', type: 'bool', half: true },
+    ],
+    defaults: { sort_order: 99, published: true },
   },
   faqs: {
     label: 'FAQs',
@@ -101,6 +121,14 @@ export const SETTINGS_FIELDS = [
   { key: 'about_title', label: 'Title', type: 'text' },
   { key: 'about_text', label: 'Text (blank line = new paragraph)', type: 'textarea', rows: 8 },
   { key: 'about_image', label: 'Photo', type: 'image' },
+  { group: 'SEO defaults' },
+  { key: 'site_url', label: 'Website address', type: 'text', half: true, help: 'Your live domain, e.g. https://drbady.com — used for canonical links, sitemap and sharing.' },
+  { key: 'seo_site_name', label: 'Site name', type: 'text', half: true },
+  { key: 'seo_title_suffix', label: 'Title suffix', type: 'text', half: true, help: 'Added after page titles, e.g. " | Dr Bady"' },
+  { key: 'seo_twitter', label: 'X / Twitter handle', type: 'text', half: true, help: 'e.g. @drbady (optional)' },
+  { key: 'seo_default_description', label: 'Default meta description', type: 'textarea', rows: 2, max: 160, min: 110, help: 'Used when a page has no description of its own.' },
+  { key: 'seo_default_image', label: 'Default social share image (1200×630)', type: 'image' },
+  { key: 'seo_org_logo', label: 'Logo for Google (square, at least 112×112)', type: 'image' },
 ]
 
 export const SUBMISSIONS = {

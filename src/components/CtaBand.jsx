@@ -29,7 +29,7 @@ export default function CtaBand() {
       <div className="site-foot-wrap"><div className="container site-foot">
         <span>© {new Date().getFullYear()} Dr Bady™. All rights reserved.</span>
         <span>
-          <Link to="/faqs">FAQs</Link> · <Link to="/academy">Academy</Link> · <a href={`mailto:${settings.email}`}>{settings.email}</a>
+          <Link to="/blog">Blog</Link> · <Link to="/faqs">FAQs</Link> · <Link to="/academy">Academy</Link> · <a href="/sitemap.xml">Sitemap</a> · <a href={`mailto:${settings.email}`}>{settings.email}</a>
         </span>
       </div></div>
     </footer>

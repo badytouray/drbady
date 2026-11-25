@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Box, CalendarDays, GraduationCap, LayoutGrid, UsersRound } from 'lucide-react'
+import { Box, CalendarDays, FilePen, GraduationCap, LayoutGrid, Newspaper, UsersRound } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
-const count = async (table, filter) => {
+const count = async (table, filter, col = 'status') => {
   let q = supabase.from(table).select('id', { count: 'exact', head: true })
-  if (filter) q = q.eq('status', filter)
+  if (filter !== undefined) q = q.eq(col, filter)
   const { count: c } = await q
   return c ?? 0
 }
@@ -18,7 +18,8 @@ export default function Dashboard() {
     Promise.all([
       count('bookings', 'new'), count('academy_enrollments', 'new'),
       count('products'), count('services'), count('academy_programs'),
-    ]).then(([b, e, p, s, a]) => setStats({ b, e, p, s, a }))
+      count('blog_posts', true, 'published'), count('blog_posts', false, 'published'),
+    ]).then(([b, e, p, s, a, bp, bd]) => setStats({ b, e, p, s, a, bp, bd }))
     supabase.from('bookings').select('*').order('created_at', { ascending: false }).limit(5).then(({ data }) => setRecent(data || []))
   }, [])
 
@@ -28,6 +29,8 @@ export default function Dashboard() {
     { to: '/admin/products', label: 'Products', n: stats.p, icon: Box },
     { to: '/admin/services', label: 'Services', n: stats.s, icon: LayoutGrid },
     { to: '/admin/academy_programs', label: 'Programmes', n: stats.a, icon: GraduationCap },
+    { to: '/admin/blog_posts', label: 'Blog posts', n: stats.bp, icon: Newspaper },
+    { to: '/admin/blog_posts', label: 'Blog drafts', n: stats.bd, icon: FilePen },
   ]
 
   return (
@@ -36,7 +39,7 @@ export default function Dashboard() {
       <div className="a-tiles">
         {!tiles && <p className="a-muted">Loading…</p>}
         {tiles?.map((t) => (
-          <Link key={t.to} to={t.to} className={`a-card a-tile ${t.hot ? 'hot' : ''}`}>
+          <Link key={t.label} to={t.to} className={`a-card a-tile ${t.hot ? 'hot' : ''}`}>
             <t.icon size={22} />
             <b>{t.n}</b>
             <span>{t.label}</span>

@@ -8,6 +8,7 @@ import { Sheet } from '../components/MobileShell'
 import { BookingForm } from '../components/Forms'
 import ListRow from '../components/ListRow'
 import { SectionTitle } from './Home'
+import Seo from '../components/Seo'
 
 function Paragraphs({ text = '' }) {
   return text.split(/\n\s*\n/).map((t, i) => <p key={i}>{t}</p>)
@@ -27,11 +28,13 @@ export function About() {
       </div>
     </div>
   )
-  if (useIsMobile()) return <Sheet title={s.about_title}>{body}</Sheet>
+  const seo = <Seo path="/about" image={s.about_image} />
+  if (useIsMobile()) return <Sheet title={s.about_title}>{seo}{body}</Sheet>
   return (
     <section className="section page-top">
+      {seo}
       <div className="container">
-        <SectionTitle first="About" underline="Dr Bady" />
+        <SectionTitle first="About" underline="Dr Bady" as="h1" />
         {body}
       </div>
     </section>
@@ -48,9 +51,11 @@ export function Contact({ title = 'Contact' }) {
       {s.location && <li><span><MapPin size={22} /> {s.location}</span></li>}
     </ul>
   )
+  const seo = <Seo path={title === 'Contact' ? '/contact' : '/book'} />
   if (useIsMobile())
     return (
       <Sheet title={title}>
+        {seo}
         <p className="m-lead">Have an idea, project or business challenge? Pick a time and let's talk.</p>
         <BookingForm />
         <h2 className="form-title">Other ways to reach me</h2>
@@ -59,8 +64,9 @@ export function Contact({ title = 'Contact' }) {
     )
   return (
     <section className="section page-top">
+      {seo}
       <div className="container">
-        <SectionTitle first={title === 'Contact' ? 'Get in' : 'Book a'} underline={title === 'Contact' ? 'Touch' : 'Chat'} sub="Have an idea, project or business challenge? Let's talk and turn it into a plan." />
+        <SectionTitle first={title === 'Contact' ? 'Get in' : 'Book a'} underline={title === 'Contact' ? 'Touch' : 'Chat'} sub="Have an idea, project or business challenge? Let's talk and turn it into a plan." as="h1" />
         <div className="contact-grid">
           <div className="card form-card"><BookingForm /></div>
           <aside className="contact-aside">
@@ -88,11 +94,22 @@ export function Faqs() {
       ))}
     </div>
   )
-  if (useIsMobile()) return <Sheet title="FAQs">{list}</Sheet>
+  const seo = (
+    <Seo
+      path="/faqs"
+      jsonLd={faqs?.length ? {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })),
+      } : undefined}
+    />
+  )
+  if (useIsMobile()) return <Sheet title="FAQs">{seo}{list}</Sheet>
   return (
     <section className="section page-top">
+      {seo}
       <div className="container container-narrow">
-        <SectionTitle first="Frequently asked" underline="Questions" />
+        <SectionTitle first="Frequently asked" underline="Questions" as="h1" />
         {list}
       </div>
     </section>
@@ -104,8 +121,10 @@ export function More() {
   const { settings: s } = useData()
   return (
     <Sheet title="More">
+      <Seo path="/more" noindex />
       <div className="m-list m-list-tight">
         <ListRow compact to="/about" icon="User" title="About Dr Bady" />
+        <ListRow compact to="/blog" icon="FileText" title="Blog" />
         <ListRow compact to="/academy" icon="BookOpen" title="Academy" />
         <ListRow compact to="/faqs" icon="CircleHelp" title="FAQs" />
         <ListRow compact to="/book" icon="CalendarDays" title="Book a Chat" />

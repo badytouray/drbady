@@ -10,8 +10,11 @@ import { ProductsPage, ProductDetail } from './pages/Products'
 import { ServicesPage, ServiceDetail } from './pages/Services'
 import Academy from './pages/Academy'
 import { About, Contact, Faqs, More } from './pages/Info'
+import Seo from './components/Seo'
 
 const AdminApp = lazy(() => import('./admin/AdminApp'))
+const BlogIndex = lazy(() => import('./pages/Blog').then((m) => ({ default: m.BlogIndex })))
+const BlogPost = lazy(() => import('./pages/Blog').then((m) => ({ default: m.BlogPost })))
 
 function ScrollTop() {
   const { pathname } = useLocation()
@@ -24,6 +27,7 @@ function ScrollTop() {
 function NotFound() {
   return (
     <Sheet title="Page not found">
+      <Seo title="Page not found" noindex />
       <p className="m-lead">That page doesn't exist. <Link to="/">Go home</Link>.</p>
     </Sheet>
   )
@@ -38,6 +42,9 @@ function SiteRoutes() {
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/services/:slug" element={<ServiceDetail />} />
       <Route path="/academy" element={<Academy />} />
+      <Route path="/blog" element={<Suspense fallback={null}><BlogIndex /></Suspense>} />
+      <Route path="/blog/category/:slug" element={<Suspense fallback={null}><BlogIndex /></Suspense>} />
+      <Route path="/blog/:slug" element={<Suspense fallback={null}><BlogPost /></Suspense>} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact title="Contact" />} />
       <Route path="/book" element={<Contact title="Book a Chat" />} />

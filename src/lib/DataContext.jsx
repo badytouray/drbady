@@ -1,22 +1,25 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { getSettings, listPublic } from './api'
-import { seedSettings, seedProducts, seedServices } from './seed'
+import { getPageSeo, getSettings, listPublic } from './api'
+import { seedSettings, seedProducts, seedServices, seedPageSeo, seedBlogCategories } from './seed'
 
 const DataContext = createContext(null)
 
-// Settings, products and services are small and used on almost every page,
+// Settings, products, services, page SEO and blog categories are small and used on almost every page,
 // so they load once at start-up. Seed data renders instantly meanwhile.
 export function DataProvider({ children }) {
   const [state, setState] = useState({
     settings: seedSettings,
     products: seedProducts,
     services: seedServices,
+    pageSeo: seedPageSeo,
+    categories: seedBlogCategories,
     loading: true,
   })
 
   useEffect(() => {
-    Promise.all([getSettings(), listPublic('products'), listPublic('services')]).then(
-      ([settings, products, services]) => setState({ settings, products, services, loading: false }),
+    Promise.all([getSettings(), listPublic('products'), listPublic('services'), getPageSeo(), listPublic('blog_categories')]).then(
+      ([settings, products, services, pageSeo, categories]) =>
+        setState({ settings, products, services, pageSeo, categories, loading: false }),
     )
   }, [])
 
