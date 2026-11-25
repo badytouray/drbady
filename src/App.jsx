@@ -13,6 +13,7 @@ import { About, Contact, Faqs, More } from './pages/Info'
 import Seo from './components/Seo'
 
 const AdminApp = lazy(() => import('./admin/AdminApp'))
+const AcademyDetail = lazy(() => import('./pages/AcademyDetail'))
 const BlogIndex = lazy(() => import('./pages/Blog').then((m) => ({ default: m.BlogIndex })))
 const BlogPost = lazy(() => import('./pages/Blog').then((m) => ({ default: m.BlogPost })))
 
@@ -42,6 +43,7 @@ function SiteRoutes() {
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/services/:slug" element={<ServiceDetail />} />
       <Route path="/academy" element={<Academy />} />
+      <Route path="/academy/:slug" element={<Suspense fallback={null}><AcademyDetail /></Suspense>} />
       <Route path="/blog" element={<Suspense fallback={null}><BlogIndex /></Suspense>} />
       <Route path="/blog/category/:slug" element={<Suspense fallback={null}><BlogIndex /></Suspense>} />
       <Route path="/blog/:slug" element={<Suspense fallback={null}><BlogPost /></Suspense>} />

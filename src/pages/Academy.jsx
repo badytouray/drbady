@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { CalendarDays, Clock, MapPin, Check, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowRight, CalendarDays, Clock, MapPin, Check, X } from 'lucide-react'
 import { usePublicList } from '../lib/DataContext'
 import { useIsMobile } from '../lib/hooks'
 import { Sheet } from '../components/MobileShell'
@@ -7,17 +8,18 @@ import { EnrollForm } from '../components/Forms'
 import { SectionTitle } from './Home'
 import Seo from '../components/Seo'
 
-function fmtDate(d) {
+export function fmtDate(d) {
   if (!d) return null
   return new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-function ProgramCard({ a, onRegister }) {
+export function ProgramCard({ a, onRegister }) {
+  const href = `/academy/${a.slug}`
   return (
     <article className="ac-card">
-      {a.cover_image && <div className="ac-img"><img src={a.cover_image} alt="" loading="lazy" /><span className="ac-kind">{a.kind}</span></div>}
+      {a.cover_image && <Link to={href} className="ac-img" tabIndex={-1} aria-hidden="true"><img src={a.cover_image} alt="" loading="lazy" /><span className="ac-kind">{a.kind}</span></Link>}
       <div className="ac-body">
-        <h3>{a.title}</h3>
+        <h3><Link to={href}>{a.title}</Link></h3>
         <p>{a.short_description}</p>
         <ul className="ac-meta">
           {a.start_date && <li><CalendarDays size={16} /> {fmtDate(a.start_date)}</li>}
@@ -27,6 +29,7 @@ function ProgramCard({ a, onRegister }) {
         {a.outcomes?.length > 0 && (
           <ul className="ac-outcomes">{a.outcomes.map((o, i) => <li key={i}><Check size={14} strokeWidth={3} /> {o}</li>)}</ul>
         )}
+        <Link to={href} className="text-link ac-more" aria-label={`Details: ${a.title}`}>View details <ArrowRight size={16} /></Link>
         <div className="ac-foot">
           <span className="ac-price">{a.price || 'Free'}</span>
           <button className="btn btn-gold btn-pill" onClick={() => onRegister(a)}>
@@ -38,7 +41,7 @@ function ProgramCard({ a, onRegister }) {
   )
 }
 
-function Modal({ title, onClose, children }) {
+export function Modal({ title, onClose, children }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>

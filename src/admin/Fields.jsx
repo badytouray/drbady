@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, Plus, Trash2, Upload } from 'lucide-react'
 import { ICON_CHOICES, Icon } from '../lib/icons'
 import { slugify, uploadImage } from '../lib/api'
+import MarkdownEditor from './MarkdownEditor'
 
 export function ImageField({ value, onChange }) {
   const ref = useRef()
@@ -90,6 +91,57 @@ function LinksField({ value = [], onChange }) {
   )
 }
 
+/** Custom key facts: [{ icon, label, value }] — e.g. Certificate: Yes */
+function DetailsField({ value, onChange }) {
+  const v = value || []
+  const upd = (i, k, val) => onChange(v.map((x, j) => (j === i ? { ...x, [k]: val } : x)))
+  return (
+    <div className="a-rep">
+      {v.map((d, i) => (
+        <div key={i} className="a-rep-row">
+          <select value={d.icon || 'Star'} onChange={(e) => upd(i, 'icon', e.target.value)} aria-label="Icon">
+            {ICON_CHOICES.map((n) => <option key={n}>{n}</option>)}
+          </select>
+          <div className="a-rep-fields">
+            <input placeholder="Label (e.g. Certificate)" value={d.label || ''} onChange={(e) => upd(i, 'label', e.target.value)} />
+            <input placeholder="Value (e.g. Included)" value={d.value || ''} onChange={(e) => upd(i, 'value', e.target.value)} />
+          </div>
+          <div className="a-rep-tools">
+            <button type="button" className="a-ico" onClick={() => onChange(move(v, i, -1))} aria-label="Move up"><ArrowUp size={16} /></button>
+            <button type="button" className="a-ico" onClick={() => onChange(move(v, i, 1))} aria-label="Move down"><ArrowDown size={16} /></button>
+            <button type="button" className="a-ico danger" onClick={() => onChange(v.filter((_, k) => k !== i))} aria-label="Remove"><Trash2 size={16} /></button>
+          </div>
+        </div>
+      ))}
+      <button type="button" className="a-btn ghost" onClick={() => onChange([...v, { icon: 'Star', label: '', value: '' }])}><Plus size={16} /> Add detail</button>
+    </div>
+  )
+}
+
+/** Question/answer pairs: [{ question, answer }] */
+function FaqsField({ value, onChange }) {
+  const v = value || []
+  const upd = (i, k, val) => onChange(v.map((x, j) => (j === i ? { ...x, [k]: val } : x)))
+  return (
+    <div className="a-rep">
+      {v.map((f, i) => (
+        <div key={i} className="a-rep-row faq">
+          <div className="a-rep-fields">
+            <input placeholder="Question" value={f.question || ''} onChange={(e) => upd(i, 'question', e.target.value)} />
+            <textarea rows={2} placeholder="Answer" value={f.answer || ''} onChange={(e) => upd(i, 'answer', e.target.value)} />
+          </div>
+          <div className="a-rep-tools">
+            <button type="button" className="a-ico" onClick={() => onChange(move(v, i, -1))} aria-label="Move up"><ArrowUp size={16} /></button>
+            <button type="button" className="a-ico" onClick={() => onChange(move(v, i, 1))} aria-label="Move down"><ArrowDown size={16} /></button>
+            <button type="button" className="a-ico danger" onClick={() => onChange(v.filter((_, k) => k !== i))} aria-label="Remove"><Trash2 size={16} /></button>
+          </div>
+        </div>
+      ))}
+      <button type="button" className="a-btn ghost" onClick={() => onChange([...v, { question: '', answer: '' }])}><Plus size={16} /> Add question</button>
+    </div>
+  )
+}
+
 /** Free-text tags: type and press Enter or comma. Stored as text[]. */
 export function TagsField({ value, onChange, placeholder = 'Add a tag and press Enter' }) {
   const v = value || []
@@ -161,7 +213,7 @@ export function Field({ f, value, onChange, row }) {
       input = (
         <label className="a-switch">
           <input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} />
-          <span /> {value ? 'Visible on site' : 'Hidden'}
+          <span /> {value ? (f.on || 'Visible on site') : (f.off || 'Hidden')}
         </label>
       )
       break
@@ -170,6 +222,10 @@ export function Field({ f, value, onChange, row }) {
       break
     case 'list': input = <ListField value={value} onChange={onChange} />; break
     case 'tags': input = <TagsField value={value} onChange={onChange} />; break
+    case 'markdown': input = <MarkdownEditor value={value || ''} onChange={onChange} minHeight={f.minHeight || 360} />; break
+    case 'details': input = <DetailsField value={value} onChange={onChange} />; break
+    case 'faqs': input = <FaqsField value={value} onChange={onChange} />; break
+    case 'heading': return <h3 className="a-group">{f.label}</h3>
     case 'datetime': input = <input type="datetime-local" value={toLocalInput(value)} onChange={(e) => onChange(e.target.value ? new Date(e.target.value).toISOString() : null)} />; break
     case 'links': input = <LinksField value={value} onChange={onChange} />; break
     default:

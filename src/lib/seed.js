@@ -87,8 +87,17 @@ export const seedServices = [
 ]
 
 export const seedPrograms = [
-  { id: 'a1', slug: 'creative-mindset-masterclass', title: 'Creative Mindset Masterclass', kind: 'Masterclass', short_description: 'Spot opportunities, build and brand your idea, and leave with a 7-day action plan.', cover_image: '/images/creative_mindset.png', start_date: null, duration: '1 day', location: 'Online & in person', price: 'Free', outcomes: ['Spot opportunities', 'Build and brand your idea', 'Design and promote', '7-day action planning'], sort_order: 1, published: true },
-  { id: 'a2', slug: 'brand-your-business', title: 'Brand Your Business', kind: 'Workshop', short_description: 'Hands-on workshop to create a logo, colours and a simple brand kit for your business.', cover_image: '/images/creative_workspace.png', start_date: null, duration: 'Half day', location: 'Online', price: '£29', outcomes: ['Logo & colour basics', 'Brand kit you can use', 'Social media templates'], sort_order: 2, published: true },
+  { id: 'a1', slug: 'creative-mindset-masterclass', title: 'Creative Mindset Masterclass', kind: 'Masterclass', short_description: 'Spot opportunities, build and brand your idea, and leave with a 7-day action plan.', cover_image: '/images/creative_mindset.png', start_date: null, duration: '1 day', location: 'Online & in person', price: 'Free', outcomes: ['Spot opportunities', 'Build and brand your idea', 'Design and promote', '7-day action planning'], sort_order: 1, published: true,
+    level: 'All levels', instructor: 'Dr Bady',
+    content: '## About this masterclass\n\nA practical, hands-on day for anyone with an idea who wants to turn it into something real. You will learn how to **spot opportunities**, shape your idea, give it a brand and plan your first week of action.\n\n## Who it is for\n\n- People with an idea they have not started yet\n- Small business owners who want to grow\n- Students and young entrepreneurs\n\n## What happens after\n\nYou leave with a simple **7-day action plan** and support to take the next step. Questions? [Book a free chat](/book).',
+    details: [{ icon: 'Award', label: 'Certificate', value: 'Certificate of attendance' }, { icon: 'UsersRound', label: 'Group size', value: 'Small groups' }],
+    requirements: ['A notebook or laptop', 'Your idea (even a rough one)'],
+    faqs: [{ question: 'Do I need experience?', answer: 'No. The masterclass is designed for complete beginners as well as people already running a business.' }, { question: 'Is it online or in person?', answer: 'Both options are available. Choose the one that suits you when you register.' }],
+  },
+  { id: 'a2', slug: 'brand-your-business', title: 'Brand Your Business', kind: 'Workshop', short_description: 'Hands-on workshop to create a logo, colours and a simple brand kit for your business.', cover_image: '/images/creative_workspace.png', start_date: null, duration: 'Half day', location: 'Online', price: '£29', outcomes: ['Logo & colour basics', 'Brand kit you can use', 'Social media templates'], sort_order: 2, published: true,
+    level: 'Beginner', instructor: 'Dr Bady', requirements: ['A laptop', 'Your business name'], details: [], faqs: [],
+    content: '## About this workshop\n\nIn half a day you will create the essentials of a brand you can actually use: a simple logo, colours, fonts and social media templates.\n\n## What you get\n\n- A starter **brand kit** (logo files, colours and fonts)\n- Ready-to-use social media templates\n- Feedback on your brand from Dr Bady',
+  },
 ]
 
 export const seedFaqs = [
