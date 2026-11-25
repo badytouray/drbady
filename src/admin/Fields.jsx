@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp, Plus, Trash2, Upload } from 'lucide-react'
 import { ICON_CHOICES, Icon } from '../lib/icons'
 import { slugify, uploadImage } from '../lib/api'
 
-function ImageField({ value, onChange }) {
+export function ImageField({ value, onChange }) {
   const ref = useRef()
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
@@ -90,11 +90,52 @@ function LinksField({ value = [], onChange }) {
   )
 }
 
+/** Free-text tags: type and press Enter or comma. Stored as text[]. */
+export function TagsField({ value, onChange, placeholder = 'Add a tag and press Enter' }) {
+  const v = value || []
+  const [draft, setDraft] = useState('')
+  const add = (raw) => {
+    const t = raw.trim().replace(/^#/, '').toLowerCase()
+    if (t && !v.includes(t)) onChange([...v, t])
+    setDraft('')
+  }
+  return (
+    <div className="a-tags">
+      {v.map((t) => (
+        <span key={t} className="a-tag">#{t}<button type="button" onClick={() => onChange(v.filter((x) => x !== t))} aria-label={`Remove ${t}`}>×</button></span>
+      ))}
+      <input
+        value={draft}
+        placeholder={v.length ? '' : placeholder}
+        onChange={(e) => (e.target.value.endsWith(',') ? add(e.target.value.slice(0, -1)) : setDraft(e.target.value))}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') { e.preventDefault(); add(draft) }
+          if (e.key === 'Backspace' && !draft && v.length) onChange(v.slice(0, -1))
+        }}
+        onBlur={() => draft && add(draft)}
+      />
+    </div>
+  )
+}
+
+/** ISO timestamp <-> <input type=datetime-local> value (local time). */
+export const toLocalInput = (iso) => {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+}
+
+export function CharCount({ value = '', min, max }) {
+  const n = (value || '').length
+  const cls = !n ? '' : n > max ? 'bad' : min && n < min ? 'warn' : 'good'
+  return <small className={`a-count ${cls}`}>{n} / {max}</small>
+}
+
 export function Field({ f, value, onChange, row }) {
   let input
   switch (f.type) {
     case 'textarea':
-      input = <textarea rows={f.rows || 3} value={value || ''} onChange={(e) => onChange(e.target.value)} required={f.required} />
+      input = <textarea rows={f.rows || 3} value={value || ''} onChange={(e) => onChange(e.target.value)} required={f.required} maxLength={f.maxLength} />
       break
     case 'slug':
       input = (
@@ -128,13 +169,15 @@ export function Field({ f, value, onChange, row }) {
       input = <select value={value || ''} onChange={(e) => onChange(e.target.value)}>{f.options.map((o) => <option key={o}>{o}</option>)}</select>
       break
     case 'list': input = <ListField value={value} onChange={onChange} />; break
+    case 'tags': input = <TagsField value={value} onChange={onChange} />; break
+    case 'datetime': input = <input type="datetime-local" value={toLocalInput(value)} onChange={(e) => onChange(e.target.value ? new Date(e.target.value).toISOString() : null)} />; break
     case 'links': input = <LinksField value={value} onChange={onChange} />; break
     default:
       input = <input value={value || ''} onChange={(e) => onChange(e.target.value)} required={f.required} />
   }
   return (
     <div className={`a-field ${f.half ? 'half' : ''}`}>
-      <span className="a-label">{f.label}{f.required && ' *'}</span>
+      <span className="a-label">{f.label}{f.required && ' *'}{f.max && <CharCount value={value} min={f.min} max={f.max} />}</span>
       {input}
       {f.help && <small className="a-help">{f.help}</small>}
     </div>

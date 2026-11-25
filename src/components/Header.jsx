@@ -47,6 +47,7 @@ export default function Header() {
           <Dropdown label="Products" to="/products" items={products} base="/products" />
           <Dropdown label="Services" to="/services" items={services} base="/services" />
           <NavLink to="/academy" className="nav-link">Academy</NavLink>
+          <NavLink to="/blog" className="nav-link">Blog</NavLink>
           <NavLink to="/about" className="nav-link">About Dr Bady</NavLink>
           <NavLink to="/contact" className="nav-link">Contact</NavLink>
         </nav>

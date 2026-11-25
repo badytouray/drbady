@@ -1,3 +1,29 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "functions": {
+    "api/render.js": { "includeFiles": "dist/{app,index}.html" }
+  },
+  "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/seo?type=index" },
+    { "source": "/sitemap-pages.xml", "destination": "/api/seo?type=pages" },
+    { "source": "/sitemap-blog.xml", "destination": "/api/seo?type=blog" },
+    { "source": "/robots.txt", "destination": "/api/seo?type=robots" },
+    { "source": "/rss.xml", "destination": "/api/seo?type=rss" },
+    { "source": "/admin", "destination": "/app.html" },
+    { "source": "/admin/(.*)", "destination": "/app.html" },
+    { "source": "/(.*)", "destination": "/api/render?path=/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/admin(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/app.html",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    }
+  ]
 }

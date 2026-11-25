@@ -7,12 +7,15 @@ import { Sheet } from '../components/MobileShell'
 import ListRow from '../components/ListRow'
 import SmartLink from '../components/SmartLink'
 import { ProductCard, SectionTitle } from './Home'
+import Seo, { breadcrumbLd, useSiteBase } from '../components/Seo'
 
 export function ProductsPage() {
   const { products } = useData()
+  const seo = <Seo path="/products" />
   if (useIsMobile())
     return (
       <Sheet title="My Products">
+        {seo}
         <div className="m-list">
           {products.map((p) => (
             <ListRow key={p.id} to={`/products/${p.slug}`} icon={p.icon} color={p.accent} title={p.title} desc={p.short_description} />
@@ -22,8 +25,9 @@ export function ProductsPage() {
     )
   return (
     <section className="section page-top">
+      {seo}
       <div className="container">
-        <SectionTitle first="My" underline="Products" sub="Purpose-built solutions for real-world needs." />
+        <SectionTitle first="My" underline="Products" sub="Purpose-built solutions for real-world needs." as="h1" />
         <div className="p-grid">{products.map((p) => <ProductCard key={p.id} p={p} />)}</div>
       </div>
     </section>
@@ -66,13 +70,24 @@ export function ProductDetail() {
   const { slug } = useParams()
   const { products, loading } = useData()
   const isMobile = useIsMobile()
+  const base = useSiteBase()
   const p = products.find((x) => x.slug === slug)
   if (!p) return loading ? null : <Navigate to="/products" replace />
+  const seo = (
+    <Seo
+      title={p.meta_title || p.title}
+      description={p.meta_description || p.tagline || p.short_description}
+      image={p.cover_image}
+      canonicalPath={`/products/${p.slug}`}
+      jsonLd={breadcrumbLd(base, [{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }, { name: p.title, path: `/products/${p.slug}` }])}
+    />
+  )
 
   if (isMobile)
     return (
       <Sheet flush>
-        <div className="d-hero"><img src={p.cover_image} alt="" /></div>
+        {seo}
+        <div className="d-hero"><img src={p.cover_image} alt={p.title} /></div>
         <div className="d-head">
           <span className="d-badge" style={{ background: p.accent }}><Icon name={p.icon} size={30} strokeWidth={2.2} /></span>
           <h1>{p.title}</h1>
@@ -87,11 +102,12 @@ export function ProductDetail() {
   const others = products.filter((x) => x.id !== p.id)
   return (
     <section className="section page-top">
+      {seo}
       <div className="container">
         <nav className="crumbs"><Link to="/products">Products</Link> / <span>{p.title}</span></nav>
         <div className="detail-grid">
           <div className="detail-media">
-            <img src={p.cover_image} alt="" />
+            <img src={p.cover_image} alt={p.title} />
             <span className="d-badge d-badge-lg" style={{ background: p.accent }}><Icon name={p.icon} size={40} strokeWidth={2} /></span>
           </div>
           <div className="detail-copy">
