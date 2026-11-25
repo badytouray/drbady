@@ -20,7 +20,7 @@ npm run dev        # http://localhost:5173  ·  admin: http://localhost:5173/adm
 
 1. Create a project at https://supabase.com.
 2. In **SQL Editor**, paste and run all of [`supabase/schema.sql`](supabase/schema.sql). This creates the tables, security rules, the `media` image bucket and the starting content.
-   Then run [`supabase/blog_seo.sql`](supabase/blog_seo.sql) the same way (blog tables, per-page SEO, SEO columns on products/services). Both files are safe to re-run.
+   Then run [`supabase/blog_seo.sql`](supabase/blog_seo.sql) (blog tables, per-page SEO) and [`supabase/academy_details.sql`](supabase/academy_details.sql) (academy detail pages) the same way. All files are safe to re-run.
 3. Copy `.env.example` to `.env` and fill in the values from **Project Settings → API**:
    ```
    VITE_SUPABASE_URL=https://xxxx.supabase.co
@@ -42,7 +42,7 @@ Tip: under **Authentication → Providers → Email**, turn off "Allow new users
 |---|---|
 | Products | Title, slug, card text, detail subtitle, cover image (upload), icon and colour, link list (e.g. Buy a Car → URL), checklist, button text/link/icon, order, publish on/off |
 | Services | Title, short title for the home strip, description, icon, image, "what's included", order, publish |
-| Academy Programmes | Workshops/masterclasses with image, date, duration, location, price, capacity, outcomes |
+| Academy Programmes | Each programme gets its own page at `/academy/<slug>`. Edit image, type, level, dates, schedule, duration, location, price, places, instructor, "what you will learn", requirements, **your own key facts** (any label → value with an icon), **free page content** (Markdown editor with images, headings, tables…), Q&As, button text, SEO title/description/share image, noindex |
 | Academy People | Everyone who registered for a programme: change status, WhatsApp/email them, export CSV |
 | Bookings | "Book a Chat" consultation requests: status, reply buttons, export CSV |
 | FAQs | Questions and answers |
@@ -57,7 +57,7 @@ Tip: under **Authentication → Providers → Email**, turn off "Allow new users
 - **Per-page tags:** every page renders its own `<title>`, meta description, canonical URL, robots, Open Graph and Twitter tags (`src/components/Seo.jsx`), plus JSON-LD: Organization + WebSite (home), BlogPosting, BreadcrumbList, Service, FAQPage.
 - **Server-rendered meta for crawlers (Vercel):** `api/render.js` serves every public URL with the correct tags already in the HTML and a crawler-readable copy of the content (full article text for blog posts), so WhatsApp/Facebook/LinkedIn previews and non-JS crawlers see the right title, description and image. Unknown URLs and missing posts return a real **404**. `/admin` is `noindex`.
 - **Dynamic sitemap:** `/sitemap.xml` is a sitemap index →
-  - `/sitemap-pages.xml`: fixed pages (from *SEO & Pages*, respecting "include in sitemap" / noindex) + every published product and service
+  - `/sitemap-pages.xml`: fixed pages (from *SEO & Pages*, respecting "include in sitemap" / noindex) + every published product, service and academy programme
   - `/sitemap-blog.xml`: every live blog post (with `lastmod` and cover image) + categories that have posts. Drafts, scheduled posts (until their date), noindex posts and posts with an external canonical are left out automatically.
 - **`/robots.txt`** (points to the sitemap, blocks `/admin`, `/api`, search/tag filter URLs) and **`/rss.xml`** feed are generated the same way.
 - All of these are cached at the CDN for 5–10 minutes, so a newly published post appears within minutes. In `npm run dev` the sitemap/robots/RSS URLs work too (served by a Vite middleware using the same code).

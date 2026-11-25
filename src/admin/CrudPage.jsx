@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Eye, EyeOff, Pencil, Plus, Trash2, X, Save } from 'lucide-react'
+import { ExternalLink, Eye, EyeOff, Pencil, Plus, Trash2, X, Save } from 'lucide-react'
 import { adminDelete, adminList, adminSave, slugify } from '../lib/api'
 import { Icon } from '../lib/icons'
 import { CONTENT } from './config'
@@ -72,6 +72,7 @@ export default function CrudPage({ table }) {
                   <button className={`a-pill ${r.published ? 'ok' : ''}`} onClick={() => togglePublish(r)} title="Toggle visibility">
                     {r.published ? <><Eye size={14} /> Live</> : <><EyeOff size={14} /> Hidden</>}
                   </button>
+                  {r.published && cfg.publicPath && <a className="a-ico" href={`${cfg.publicPath}/${r.slug}`} target="_blank" rel="noreferrer" aria-label="View on site" title="View on site"><ExternalLink size={15} /></a>}
                 </td>
                 <td className="a-actions">
                   <button className="a-ico" onClick={() => setEditing(r)} aria-label="Edit"><Pencil size={17} /></button>
@@ -85,7 +86,7 @@ export default function CrudPage({ table }) {
 
       {editing && (
         <div className="a-drawer-bg" onClick={() => !saving && setEditing(null)}>
-          <form className="a-drawer" onClick={(e) => e.stopPropagation()} onSubmit={save}>
+          <form className={`a-drawer ${cfg.wide ? 'wide' : ''}`} onClick={(e) => e.stopPropagation()} onSubmit={save}>
             <div className="a-drawer-head">
               <h2>{editing.id ? `Edit ${cfg.singular}` : `New ${cfg.singular}`}</h2>
               <button type="button" className="a-ico" onClick={() => setEditing(null)} aria-label="Close"><X size={20} /></button>

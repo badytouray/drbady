@@ -4,7 +4,7 @@
 // published content), and falls back to the seed data when Supabase is not set up.
 import { renderMarkdown } from '../../src/lib/markdown.js'
 import {
-  seedSettings, seedPageSeo, seedProducts, seedServices, seedBlogCategories, seedBlogPosts,
+  seedSettings, seedPageSeo, seedProducts, seedServices, seedBlogCategories, seedBlogPosts, seedPrograms,
 } from '../../src/lib/seed.js'
 
 const SEEDS = {
@@ -13,6 +13,7 @@ const SEEDS = {
   services: seedServices,
   blog_categories: seedBlogCategories,
   blog_posts: seedBlogPosts,
+  academy_programs: seedPrograms,
 }
 
 export function envFrom(source = {}) {
@@ -109,10 +110,11 @@ export async function sitemapIndex(env, origin) {
 export async function sitemapPages(env, origin) {
   const settings = await loadSettings(env)
   const base = baseUrl(env, settings, origin)
-  const [pages, products, services] = await Promise.all([
+  const [pages, products, services, programs] = await Promise.all([
     q(env, 'page_seo', { select: '*', order: 'sort_order' }),
     q(env, 'products', { select: 'slug,title,cover_image,updated_at,created_at', published: 'eq.true', order: 'sort_order' }, (r) => r.published),
     q(env, 'services', { select: 'slug,title,cover_image,updated_at,created_at', published: 'eq.true', order: 'sort_order' }, (r) => r.published),
+    q(env, 'academy_programs', { select: '*', published: 'eq.true', order: 'sort_order' }, (r) => r.published),
   ])
   const entries = [
     ...pages.filter((p) => p.in_sitemap !== false && !p.noindex).map((p) => ({
@@ -129,6 +131,10 @@ export async function sitemapPages(env, origin) {
     ...services.map((s) => ({
       loc: `${base}/services/${s.slug}`, lastmod: iso(s.updated_at || s.created_at), changefreq: 'monthly', priority: 0.7,
       images: s.cover_image ? [{ loc: abs(base, s.cover_image), title: s.title }] : [],
+    })),
+    ...programs.filter((a) => !a.noindex).map((a) => ({
+      loc: `${base}/academy/${a.slug}`, lastmod: iso(a.updated_at || a.created_at), changefreq: 'weekly', priority: 0.8,
+      images: a.cover_image ? [{ loc: abs(base, a.cover_image), title: a.title }] : [],
     })),
   ]
   return urlset(entries)
@@ -316,6 +322,38 @@ export async function pageMeta(env, origin, rawPath) {
       const { html } = renderMarkdown(post.content)
       body = shell(`<article><h1>${esc(post.title)}</h1><p><time datetime="${esc(iso(post.published_at))}">${new Date(post.published_at).toDateString()}</time> · ${esc(post.author_name || siteName)}</p>${post.cover_image ? `<img src="${esc(post.cover_image)}" alt="${esc(post.cover_alt || post.title)}" />` : ''}${html}</article>`)
     }
+  } else if ((seg = path.match(/^\/academy\/([^/]+)$/))) {
+    const slug = seg[1]
+    const [a] = await q(env, 'academy_programs', { select: '*', slug: `eq.${slug}`, published: 'eq.true', limit: '1' }, (r) => r.slug === slug && r.published)
+    if (a) {
+      const desc = a.meta_description || a.short_description || defaults.description
+      const facts = [
+        a.start_date && ['Date', a.end_date && a.end_date !== a.start_date ? `${a.start_date} – ${a.end_date}` : a.start_date],
+        a.schedule && ['Schedule', a.schedule], a.duration && ['Duration', a.duration], a.location && ['Location', a.location],
+        a.level && ['Level', a.level], a.price && ['Price', a.price], a.instructor && ['With', a.instructor],
+        ...(a.details || []).filter((d) => d.label).map((d) => [d.label, d.value]),
+      ].filter(Boolean)
+      m = {
+        ...defaults, title: fullTitle(a.meta_title || a.title, settings), description: desc, image: abs(base, a.og_image || a.cover_image) || defaults.image, noindex: a.noindex,
+        jsonLd: [
+          {
+            '@context': 'https://schema.org', '@type': 'Course', name: a.title, description: desc, url: defaults.canonical,
+            provider: { '@type': 'Organization', name: siteName, sameAs: base },
+            hasCourseInstance: { '@type': 'CourseInstance', courseMode: /online/i.test(a.location || '') ? 'Online' : 'Onsite', ...(a.start_date ? { startDate: a.start_date } : {}), ...(a.end_date ? { endDate: a.end_date } : {}) },
+          },
+          ...((a.faqs || []).length ? [{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: a.faqs.filter((f) => f.question && f.answer).map((f) => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })) }] : []),
+          crumbLd(base, [{ name: 'Home', path: '/' }, { name: 'Academy', path: '/academy' }, { name: a.title, path }]),
+        ],
+      }
+      const list = (title, arr) => (arr?.length ? `<h2>${title}</h2><ul>${arr.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>` : '')
+      body = shell(`<article><h1>${esc(a.title)}</h1><p>${esc(a.short_description || '')}</p>`
+        + (facts.length ? `<dl>${facts.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : '')
+        + list('What you will learn', a.outcomes)
+        + (a.content ? renderMarkdown(a.content).html : a.description ? `<p>${esc(a.description)}</p>` : '')
+        + list('What you need', a.requirements)
+        + ((a.faqs || []).length ? `<h2>Questions &amp; answers</h2>${a.faqs.map((f) => `<h3>${esc(f.question)}</h3><p>${esc(f.answer)}</p>`).join('')}` : '')
+        + '</article>')
+    }
   } else if ((seg = path.match(/^\/(products|services)\/([^/]+)$/))) {
     const [kind, slug] = [seg[1], seg[2]]
     const [row] = await q(env, kind, { select: '*', slug: `eq.${slug}`, published: 'eq.true', limit: '1' }, (r) => r.slug === slug && r.published)
@@ -336,6 +374,9 @@ export async function pageMeta(env, origin, rawPath) {
       if (path === '/blog') {
         const posts = await livePosts(env, 'slug,title', { limit: '50' })
         extra = linkList(posts.map((p) => ({ href: `/blog/${p.slug}`, text: p.title })))
+      } else if (path === '/academy') {
+        const rows = await q(env, 'academy_programs', { select: 'slug,title', published: 'eq.true', order: 'sort_order' }, (r) => r.published)
+        extra = linkList(rows.map((r) => ({ href: `/academy/${r.slug}`, text: r.title })))
       } else if (path === '/products' || path === '/services') {
         const rows = await q(env, path.slice(1), { select: 'slug,title', published: 'eq.true', order: 'sort_order' }, (r) => r.published)
         extra = linkList(rows.map((r) => ({ href: `${path}/${r.slug}`, text: r.title })))
