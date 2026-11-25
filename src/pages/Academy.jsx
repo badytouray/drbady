@@ -33,7 +33,7 @@ export function ProgramCard({ a, onRegister }) {
         <div className="ac-foot">
           <span className="ac-price">{a.price || 'Free'}</span>
           <button className="btn btn-gold btn-pill" onClick={() => onRegister(a)}>
-            <CalendarDays size={18} /> Join
+            <CalendarDays size={18} /> Register  Now
           </button>
         </div>
       </div>
